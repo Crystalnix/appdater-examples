@@ -1,4 +1,4 @@
-!include nsProcess.nsh
+!include nsProcess.nsh ;http://nsis.sourceforge.net/NsProcess_plugin
 !include LogicLib.nsh
 
 !define Version 1.0.0.1
