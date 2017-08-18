@@ -37,7 +37,7 @@ namespace TestAppWPF
         private async Task ChechUpdateProcessAsync()
         {
             CheckBtn.IsEnabled = false;
-            string path = @"C:\Program Files (x86)\TestCo\Update\1.3.99.0\GoogleUpdate.exe";
+            string path = @"C:\Program Files (x86)\Crystalnix\Update\1.3.99.0\GoogleUpdate.exe";
 
             var proc = new Process();
             proc.StartInfo.UseShellExecute = false;

@@ -2,7 +2,7 @@
 !include LogicLib.nsh
 
 !define Version 1.0.0.1
-!define Company TestCo
+!define Company Crystalnix
 !define AppID {1D99C42C-F620-4853-B2DE-ED5EB7D18C10}
 !define AppName TestAppWPF
 
