@@ -1,9 +1,9 @@
 !include nsProcess.nsh ;http://nsis.sourceforge.net/NsProcess_plugin
 !include LogicLib.nsh
 
-!define Version 1.0.0.1
-!define Company Crystalnix
-!define AppID {1D99C42C-F620-4853-B2DE-ED5EB7D18C10}
+!define Version 1.0.0.0
+!define Company "Crystalnix"
+!define AppID {5A7490AC-F314-4BD3-9591-7B6E9CEA5560}
 !define AppName TestAppWPF
 
 Name ${AppName}

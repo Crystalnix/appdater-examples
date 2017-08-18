@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define TestAppWPF_TargetDir=$(var.TestAppWPF.TargetDir)?>
-	<Product Id="*" Name="TestAppWPF_WiX" Language="1033" Version="1.0.0.1" Manufacturer="Crystalnix" UpgradeCode="1D99C42C-F620-4853-B2DE-ED5EB7D18C10">
+	<Product Id="*" Name="TestAppWPF_WiX" Language="1033" Version="1.0.0.1" Manufacturer="Crystalnix" UpgradeCode="5A7490AC-F314-4BD3-9591-7B6E9CEA5560">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
@@ -32,7 +32,7 @@
 
       <Component Id="RegistryEntries" Guid="A6804CAB-4333-451B-B2FA-DB99463725A8">
         <RegistryKey Root="HKLM"
-                     Key="Software\Crystalnix\Update\Clients\{1D99C42C-F620-4853-B2DE-ED5EB7D18C10}"
+                     Key="Software\Crystalnix\Update\Clients\{5A7490AC-F314-4BD3-9591-7B6E9CEA5560}"
                      Action="createAndRemoveOnUninstall">
           <RegistryValue Type="string" Name="pv" Value="1.0.0.1" KeyPath="yes"/>
         </RegistryKey>
