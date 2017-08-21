@@ -1,5 +1,5 @@
 ; Remember for Omaha update you need to run this setup with 
-; '/verysilent' argument
+; '/verysilent /SP-' argument
 ; You can set argument for setup in admin panel Omaha server
 
 #define MyAppName "TestAppWPF"
