@@ -23,7 +23,7 @@ public class FXMLDocumentController implements Initializable {
         try
         {
             String[] cmdarray = {
-                "C:\\Program Files (x86)\\Crystalnix\\Update\\1.3.99.0\\Update.exe",
+                "C:\\Program Files (x86)\\Crystalnix\\Update\\1.3.99.0\\GoogleUpdate.exe",
                 "/machine", 
                 "/ua", 
                 "/installsource", 
