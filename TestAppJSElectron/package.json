@@ -1,0 +1,9 @@
+{
+    "name": "TestAppElectron",
+    "version": "1.0.0",
+    "main": "main.js",
+    "keywords": ["util", "functional", "server", "client", "browser"],
+    "author": "mikhail",
+    "contributors": [],
+    "dependencies": {}
+}
