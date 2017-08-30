@@ -7,7 +7,7 @@
 !define AppName TestAppWPF
 
 Name ${AppName}
-OutFile TestAppWPFSetup.exe
+OutFile ${AppName}Setup.exe
 SilentInstall silent       ;Important #1
 InstallDir $PROGRAMFILES\${AppName}
 

@@ -6,7 +6,6 @@
 #define MyAppVersion "1.0.0.0"
 #define Company "Crystalnix"
 #define MyAppURL "https://github.com/Crystalnix/appdater-examples"
-#define MyAppExeName "TestAppWPF.exe"
 #define APPID "{{5A7490AC-F314-4BD3-9591-7B6E9CEA5560}"
 [Setup]
 AppId= {#APPID}
@@ -20,7 +19,7 @@ DefaultDirName={pf}\{#MyAppName}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir=./
-OutputBaseFilename=TestAppWPFSetupInno
+OutputBaseFilename={#MyAppName}SetupInno
 Compression=lzma
 SolidCompression=yes
 

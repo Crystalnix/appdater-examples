@@ -6,7 +6,6 @@
 #define MyAppVersion "1.0.0.0"
 #define Company "Crystalnix"
 #define MyAppURL "https://github.com/Crystalnix/appdater-examples"
-#define MyAppExeName "TestAppMFC.exe"
 #define APPID "{{81A78FC5-54CD-4009-B3AD-4791A11FFF45}"
 [Setup]
 AppId= {#APPID}
@@ -20,7 +19,7 @@ DefaultDirName={pf}\{#MyAppName}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir=./
-OutputBaseFilename=TestAppMFCSetupInno
+OutputBaseFilename={#MyAppName}SetupInno
 Compression=lzma
 SolidCompression=yes
 

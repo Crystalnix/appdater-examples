@@ -6,7 +6,6 @@
 #define MyAppVersion "1.0.0.0"
 #define Company "Crystalnix"
 #define MyAppURL "https://github.com/Crystalnix/appdater-examples"
-#define MyAppExeName "TestAppJavaFX.exe"
 #define APPID "{{D639B7EF-7F72-4182-95C2-128CB4B90199}"
 [Setup]
 AppId= {#APPID}
@@ -20,7 +19,7 @@ DefaultDirName={pf}\{#MyAppName}
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir=./
-OutputBaseFilename=TestAppJavaFXSetupInno
+OutputBaseFilename={#MyAppName}SetupInno
 Compression=lzma
 SolidCompression=yes
 

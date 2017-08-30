@@ -7,7 +7,7 @@
 !define AppName TestAppMFC
 
 Name ${AppName}
-OutFile TestAppMFCSetup.exe
+OutFile ${AppName}Setup.exe
 SilentInstall silent       ;Important #1
 InstallDir $PROGRAMFILES\${AppName}
 
