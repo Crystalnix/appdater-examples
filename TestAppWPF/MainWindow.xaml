@@ -12,10 +12,12 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Label x:Name="LblVersion" Grid.Row="0" Content="Current Version:" VerticalAlignment="Bottom"/>
-        <Button x:Name="CheckBtn" Grid.Row="1" Content="Check and Install" Click="ChkBtn_Click"/>
-        <StackPanel Grid.Row="2">
+        <Button x:Name="CheckBtnCmd" Grid.Row="1" Content="Check and Install (cmd)" Click="ChkBtnCmd_Click"/>
+        <Button x:Name="CheckBtnCOM" Grid.Row="2" Content="Check and Install (COM)" Click="ChkBtnCOM_Click"/>
+        <StackPanel Grid.Row="3">
             <Label Name="LblStatus" Content="{Binding StatusString}" Height="25"/>
             <ProgressBar Name="ProgressDownload" Value="{Binding DownloadPercent}" Height="25"/>
         </StackPanel>

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace TestAppWPF
 {
@@ -18,12 +20,54 @@ namespace TestAppWPF
             set { _downloadpercentage = value; OnPropertyChanged(nameof(DownloadPercent)); }
         }
 
-        public int UpdProcessId;
+        public string registryBasePath;
+        public string GUID;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string info)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
+
+
+        private void GetDownloadPercentsFromRegistry()
+        {
+            var tmp = RegistryUtil.GetUpdateRegistryKeyValue(registryBasePath + @"ClientState\{" + GUID + @"}\CurrentState", "DownloadProgressPercent");
+            if (!string.IsNullOrEmpty(tmp))
+            {
+                DownloadPercent = int.Parse(tmp);
+            }
+        }
+
+        public async Task GetValuesFromRegistry()
+        {
+            await Task.Run(() => GetValues(false));
+        }
+
+        public async Task GetValuesFromCOMObject()
+        {
+            await Task.Run(() => GetValues(true));
+        }
+
+        private async Task GetValues(bool isCOM)
+        {
+            StatusString = "CHECKING...";
+            try
+            {
+                var updproc = new Process[] { };
+                do
+                {
+                    updproc = Process.GetProcessesByName("Update");
+                    GetDownloadPercentsFromRegistry();
+                }
+                while (updproc.Length != 0);
+            }
+            catch
+            {
+            }
+
+            GetDownloadPercentsFromRegistry();
+            StatusString = "READY";
         }
     }
 }
