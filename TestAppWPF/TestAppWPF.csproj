@@ -53,9 +53,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GoogleUpdate3Lib">
-      <HintPath>..\..\..\..\..\..\..\OmahaEnvironment\omaha\omaha\scons-out\dbg-win\staging\idls\GoogleUpdate3Lib.dll</HintPath>
+    <Reference Include="GoogleUpdate3Lib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>omaha_idls\GoogleUpdate3Lib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
