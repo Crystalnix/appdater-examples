@@ -66,7 +66,7 @@ namespace TestAppWPF
         public async Task<bool> CheckForUpdates()
         {
             appBundle.checkForUpdate();
-            //await Task.Run(() => GetCurrentStateValues());
+            await Task.Run(() => GetCurrentStateValues());
 
             var waitingThread = new Thread(WaitingThread);
             waitingThread.Start(appBundle);
@@ -78,7 +78,7 @@ namespace TestAppWPF
         public async Task<bool> DownloadUpdates()
         {
             appBundle.download();
-            //await Task.Run(() => GetCurrentStateValues());
+            await Task.Run(() => GetCurrentStateValues());
 
             var waitingThread = new Thread(WaitingThread);
             waitingThread.Start(appBundle);
@@ -90,7 +90,7 @@ namespace TestAppWPF
         public async Task<bool> InstallUpdates()
         {
             appBundle.install();
-            //await Task.Run(() => GetCurrentStateValues());
+            await Task.Run(() => GetCurrentStateValues());
 
             return true;
         }

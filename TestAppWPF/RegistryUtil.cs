@@ -7,15 +7,13 @@ namespace TestAppWPF
         static public string GetUpdateRegistryKeyValue(string fullPath, string name)
         {
             var reg = Registry.LocalMachine.OpenSubKey(fullPath);
-            var value = string.Empty;
 
-            try
+            if (reg!=null)
             {
-                value = reg.GetValue(name).ToString();
+                return reg.GetValue(name, string.Empty).ToString();
             }
-            catch { }
-            
-            return value;
+
+            return string.Empty;
         }
     }
 }

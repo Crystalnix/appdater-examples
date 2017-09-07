@@ -15,7 +15,7 @@ namespace TestAppWPF
         private string appGUID;
         private UpdateStatus upd;
         private AppBundleCOM com;
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -44,7 +44,8 @@ namespace TestAppWPF
             upd.DownloadPercent = 0;
 
             // run new process
-            await ChechUpdateProcessAsync();
+            await Task.Run(() => CheckUpdateProcessAsync());
+            await Task.Run(() => upd.GetValuesFromRegistry());
 
             ShowVersion();
 
@@ -88,10 +89,9 @@ namespace TestAppWPF
             CheckBtnCmd.IsEnabled = true;
         }
 
-        private async Task ChechUpdateProcessAsync()
+        private async Task CheckUpdateProcessAsync()
         {
             string path = @"C:\Program Files (x86)\Crystalnix\Update\Update.exe";
-
             var proc = new Process();
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
@@ -99,10 +99,6 @@ namespace TestAppWPF
             proc.StartInfo.Arguments = "/machine /ua /installsource ondemand"; // No Omaha Update GUI
             //proc.StartInfo.Arguments = "/machine /ua";                         // With Omaha Update GUI
             proc.Start();
-
-            await Task.Run(() => upd.GetValuesFromRegistry());
-
-            proc.WaitForExit();
         }
 
         private void ShowVersion()
