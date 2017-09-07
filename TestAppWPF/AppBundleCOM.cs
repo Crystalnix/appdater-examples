@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace TestAppWPF
 {
-    public class AppBundleCOM : INotifyPropertyChanged
+    public class AppBundleCOM : INotifyPropertyChanged, IDisposable
     {
         private string _ststring;
         public string StatusString
@@ -56,10 +56,18 @@ namespace TestAppWPF
             return true;
         }
 
+        ~AppBundleCOM()
+        {
+            DeInitialize();
+        }
+
         public void DeInitialize()
         {
-            while (Marshal.ReleaseComObject(appBundle) > 0) ;
-            appBundle = null;
+            if (appBundle != null)
+            {
+                while (Marshal.ReleaseComObject(appBundle) > 0) ;
+                appBundle = null;
+            }
             GC.Collect();
         }
 
@@ -175,6 +183,11 @@ namespace TestAppWPF
                 }
                 Thread.Sleep(500);
             }
+        }
+
+        public void Dispose()
+        {
+            DeInitialize();
         }
     }
 }
