@@ -14,4 +14,5 @@ TestAppWPF - shows examples for simple code with various programming languages a
 
 Pure and absolutely clear example for check updates is TestAppJS. Others examples only add methods.  
 The fullest example is WPF (.Net 4.5), which uses several threads for interaction with the Windows registry.
+Also TestAppWPF shows how to interact with Omaha client via COM interfaces.
 
