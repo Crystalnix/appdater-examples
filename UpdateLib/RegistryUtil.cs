@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
 
-namespace TestAppWPF
+namespace UpdateLib
 {
     static public class RegistryUtil
     {

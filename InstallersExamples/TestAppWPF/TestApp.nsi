@@ -14,8 +14,11 @@ InstallDir $PROGRAMFILES\${AppName}
 Section
 
   SetOutPath $InstDir
+  
   File "TestAppWPF.exe"
   File "Sleep Away.mp3"
+  File "..\..\TestAppWPF\bin\Debug\Update.ini"
+  File "..\..\TestAppWPF\bin\Debug\UpdateLib.dll"
   
   WriteRegStr HKLM Software\${Company}\Update\Clients\${AppID} pv ${Version}  ;Important #2
   WriteRegStr HKLM Software\${Company}\Update\Clients\${AppID} name ${AppName} 

@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
+using UpdateLib;
 
 namespace TestAppWPF
 {
@@ -13,8 +14,7 @@ namespace TestAppWPF
     {
         private string company;
         private string appGUID;
-        private UpdateStatus upd;
-        private AppBundleCOM com;
+        private string logSettingsFilePath = @"C:\Update.ini";
 
         public MainWindow()
         {
@@ -25,6 +25,15 @@ namespace TestAppWPF
             Assembly assembly = Assembly.GetExecutingAssembly();
             company = assembly.GetCustomAttribute<AssemblyCompanyAttribute>().Company;
             appGUID = assembly.GetCustomAttribute<GuidAttribute>().Value;
+
+            // Always Enable Omaha Log
+            System.IO.File.Copy("./Update.ini", logSettingsFilePath, true);
+        }
+
+        private void ShowVersion()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            LblVersion.Content = assembly.GetName().Version.ToString();
         }
 
         private async void ChkBtnCmd_Click(object sender, RoutedEventArgs e)
@@ -33,19 +42,14 @@ namespace TestAppWPF
             CheckBtnCmd.IsEnabled = false;
 
             // create object
-            upd = new UpdateStatus();
-            upd.registryBasePath = @"SOFTWARE\Wow6432Node\" + company + @"\Update\";
-            upd.GUID = appGUID;
+            var upd = new AppBundleCMD(appGUID, @"SOFTWARE\Wow6432Node\" + company + @"\Update\");
 
             // binding
-            LblStatus.DataContext = upd;
-            ProgressDownload.DataContext = upd;
-            upd.StatusString = "READY";
-            upd.DownloadPercent = 0;
+            LblStatus.DataContext = upd.status;
+            ProgressDownload.DataContext = upd.status;
 
-            // run new process
-            await Task.Run(() => CheckUpdateProcessAsync());
-            await Task.Run(() => upd.GetValuesFromRegistry());
+            // run check update process
+            await Task.Run(() => upd.CheckUpdateProcessAsync());
 
             ShowVersion();
 
@@ -59,20 +63,17 @@ namespace TestAppWPF
             CheckBtnCmd.IsEnabled = false;
 
             // create COM wrapper
-            com = new AppBundleCOM();
+            var com = new AppBundleCOM();
             if (!com.Initialize(appGUID))
             {
                 CheckBtnCOM.IsEnabled = true;
                 CheckBtnCmd.IsEnabled = true;
-
                 return;
             }
 
             // binding
-            LblStatus.DataContext = com;
-            ProgressDownload.DataContext = com;
-            com.StatusString = "READY";
-            com.DownloadPercent = 0;
+            LblStatus.DataContext = com.status;
+            ProgressDownload.DataContext = com.status;
 
             // call COM wrapper methods
             if (await Task.Run(() => com.CheckForUpdates()))
@@ -87,24 +88,6 @@ namespace TestAppWPF
 
             CheckBtnCOM.IsEnabled = true;
             CheckBtnCmd.IsEnabled = true;
-        }
-
-        private async Task CheckUpdateProcessAsync()
-        {
-            string path = @"C:\Program Files (x86)\Crystalnix\Update\Update.exe";
-            var proc = new Process();
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.FileName = path;
-            proc.StartInfo.Arguments = "/machine /ua /installsource ondemand"; // No Omaha Update GUI
-            //proc.StartInfo.Arguments = "/machine /ua";                         // With Omaha Update GUI
-            proc.Start();
-        }
-
-        private void ShowVersion()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            LblVersion.Content = "CurrentVersion: " + assembly.GetName().Version.ToString();
         }
     }
 }

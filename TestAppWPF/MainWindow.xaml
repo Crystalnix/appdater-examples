@@ -5,19 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestAppWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="180.83" Width="212.227">
+        Title="MainWindow" ResizeMode="NoResize" Width="208" Height="200">
     <Grid>
-
+        
         <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
-        <Label x:Name="LblVersion" Grid.Row="0" Content="Current Version:" VerticalAlignment="Bottom"/>
-        <Button x:Name="CheckBtnCmd" Grid.Row="1" Content="Check and Install (cmd)" Click="ChkBtnCmd_Click"/>
-        <Button x:Name="CheckBtnCOM" Grid.Row="2" Content="Check and Install (COM)" Click="ChkBtnCOM_Click"/>
-        <StackPanel Grid.Row="3">
+
+        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+            <Label Grid.Column="0" Grid.Row="0" Content="Current Version:" VerticalAlignment="Bottom"/>
+        </StackPanel>
+        <Label x:Name="LblVersion" Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom"/>
+        <Button x:Name="CheckBtnCmd" Grid.Column="0" Grid.Row="2" Content="Update (cmd)" Click="ChkBtnCmd_Click"/>
+        <Button x:Name="CheckBtnCOM" Grid.Column="0" Grid.Row="3" Content="Update (COM)" Click="ChkBtnCOM_Click"/>
+        <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2">
             <Label Name="LblStatus" Content="{Binding StatusString}" Height="25"/>
             <ProgressBar Name="ProgressDownload" Value="{Binding DownloadPercent}" Height="25"/>
         </StackPanel>

@@ -33,6 +33,14 @@
       <Component Id="Sleep_Away.mp3" Guid="8124d629-2dcb-49f1-90fb-88a87beee260">
         <File Id="Sleep_Away.mp3" Name="Sleep Away.mp3" Source="../Sleep Away.mp3" />
       </Component>
+
+      <Component Id="UpdateLib.dll" Guid="8124d629-2dcb-49f1-90fb-88a87beee261">
+        <File Id="UpdateLib.dll" Name="UpdateLib.dll" Source="$(var.TestAppWPF_TargetDir)UpdateLib.Dll" />
+      </Component>
+
+      <Component Id="Update.ini" Guid="8124d629-2dcb-49f1-90fb-88a87beee262">
+        <File Id="Update.ini" Name="Update.ini" Source="$(var.TestAppWPF_TargetDir)Update.ini" />
+      </Component>
       
       <Component Id="RegistryEntries" Guid="A6804CAB-4333-451B-B2FA-DB99463725A8">
         <RegistryKey Root="HKLM" Key="Software\Crystalnix\Update\Clients\{5A7490AC-F314-4BD3-9591-7B6E9CEA5560}">

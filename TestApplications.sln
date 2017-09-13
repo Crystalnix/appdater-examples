@@ -4,10 +4,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAppWPF", "TestAppWPF\TestAppWPF.csproj", "{4689BE0D-DBB1-48BB-BF22-1D1BB10AD1D0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118} = {7EEE59CB-CB08-4425-9ED9-7231AEB62118}
+	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "TestAppWPF_WiX", "InstallersExamples\TestAppWPF\TestAppWPF_WiX\TestAppWPF_WiX.wixproj", "{939E77FB-F455-40D3-B5FD-29269655D7F8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestAppMFC", "TestAppMFC\TestAppMFC.vcxproj", "{9989FD07-61B4-4BD8-A51B-87E0D12A59EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateLib", "UpdateLib\UpdateLib.csproj", "{7EEE59CB-CB08-4425-9ED9-7231AEB62118}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +54,18 @@ Global
 		{9989FD07-61B4-4BD8-A51B-87E0D12A59EE}.Release|x64.Build.0 = Release|x64
 		{9989FD07-61B4-4BD8-A51B-87E0D12A59EE}.Release|x86.ActiveCfg = Release|Win32
 		{9989FD07-61B4-4BD8-A51B-87E0D12A59EE}.Release|x86.Build.0 = Release|Win32
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Debug|x64.Build.0 = Debug|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Debug|x86.Build.0 = Debug|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Release|x64.ActiveCfg = Release|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Release|x64.Build.0 = Release|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Release|x86.ActiveCfg = Release|Any CPU
+		{7EEE59CB-CB08-4425-9ED9-7231AEB62118}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
