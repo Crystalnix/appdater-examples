@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace UpdateLib
 {
@@ -14,6 +9,7 @@ namespace UpdateLib
         DOWNLOADING,
         INSTALLING,
         NO_UPDATE,
+        HAVE_UPDATE,
         ERROR,
     }
 

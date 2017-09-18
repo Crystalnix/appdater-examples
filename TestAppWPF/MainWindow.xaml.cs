@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using UpdateLib;
@@ -15,6 +16,7 @@ namespace TestAppWPF
         private string company;
         private string appGUID;
         private string logSettingsFilePath = @"C:\Update.ini";
+        private string baseRegKey;
 
         public MainWindow()
         {
@@ -25,9 +27,12 @@ namespace TestAppWPF
             Assembly assembly = Assembly.GetExecutingAssembly();
             company = assembly.GetCustomAttribute<AssemblyCompanyAttribute>().Company;
             appGUID = assembly.GetCustomAttribute<GuidAttribute>().Value;
+            baseRegKey = @"SOFTWARE\Wow6432Node\" + company + @"\Update\";
 
             // Always Enable Omaha Log
             System.IO.File.Copy("./Update.ini", logSettingsFilePath, true);
+
+            ThreadPool.QueueUserWorkItem(CloseInstanceOnUpdate, baseRegKey + @"Clients\{" + appGUID +@"}");
         }
 
         private void ShowVersion()
@@ -42,14 +47,17 @@ namespace TestAppWPF
             CheckBtnCmd.IsEnabled = false;
 
             // create object
-            var upd = new AppBundleCMD(appGUID, @"SOFTWARE\Wow6432Node\" + company + @"\Update\");
+            var upd = new AppBundleCMD(appGUID, baseRegKey);
 
             // binding
             LblStatus.DataContext = upd.status;
             ProgressDownload.DataContext = upd.status;
 
             // run check update process
-            await Task.Run(() => upd.CheckUpdateProcessAsync());
+            if (MessageBox.Show("Close all instances of application for update?", "Warrning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                await Task.Run(() => upd.CheckUpdateProcessAsync());
+            }
 
             ShowVersion();
 
@@ -63,8 +71,8 @@ namespace TestAppWPF
             CheckBtnCmd.IsEnabled = false;
 
             // create COM wrapper
-            var com = new AppBundleCOM();
-            if (!com.Initialize(appGUID))
+            var com = new AppBundleCOM(appGUID, baseRegKey);
+            if (!com.Initialize())
             {
                 CheckBtnCOM.IsEnabled = true;
                 CheckBtnCmd.IsEnabled = true;
@@ -80,7 +88,10 @@ namespace TestAppWPF
             {
                 if (await Task.Run(() => com.DownloadUpdates()))
                 {
-                    await Task.Run(() => com.InstallUpdates());
+                    if (MessageBox.Show("Close all instances of application for update?", "Warrning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        await Task.Run(() => com.InstallUpdates());
+                    }
                 }
             }
 
@@ -88,6 +99,29 @@ namespace TestAppWPF
 
             CheckBtnCOM.IsEnabled = true;
             CheckBtnCmd.IsEnabled = true;
+        }
+
+        private static void CloseInstanceOnUpdate(object stateInfo)
+        {
+            var regKey = (string)stateInfo;
+            if (string.IsNullOrEmpty(regKey))
+            {
+                return;
+            }
+            Process p = Process.GetCurrentProcess();
+            int ival;
+            while (true)
+            {
+                var val = RegistryUtil.GetRegistryKeyValue(regKey, "update");
+                if (int.TryParse(val, out ival))
+                {
+                    if (ival == 1)
+                    {
+                        p.CloseMainWindow();
+                    }
+                }
+                Thread.Sleep(10);
+            }
         }
     }
 }

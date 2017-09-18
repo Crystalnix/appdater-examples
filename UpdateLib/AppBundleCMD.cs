@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace UpdateLib
@@ -9,6 +8,9 @@ namespace UpdateLib
         public Status status;
         public string registryBasePath { get; private set; }
         public string GUID { get; private set; }
+        private string quitFlagPath;
+        private string quitFlagName;
+        private string updatePath;
 
         public AppBundleCMD(string appGUID, string regBasePath)
         {
@@ -16,6 +18,9 @@ namespace UpdateLib
 
             GUID = appGUID;
             registryBasePath = regBasePath;
+            updatePath = RegistryUtil.GetRegistryKeyValue(registryBasePath, "path");
+            quitFlagPath = registryBasePath + @"ClientState\{" + GUID + @"}\CurrentState";
+            quitFlagName = "DownloadProgressPercent";
         }
 
         public async Task GetValuesFromRegistry()
@@ -25,7 +30,8 @@ namespace UpdateLib
 
         public async Task CheckUpdateProcessAsync()
         {
-            string path = @"C:\Program Files (x86)\Crystalnix\Update\Update.exe";
+            if (string.IsNullOrEmpty(updatePath)) { return; }
+            string path = updatePath;
             var proc = new Process();
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
@@ -37,9 +43,21 @@ namespace UpdateLib
             await Task.Run(() => GetValuesFromRegistry());
         }
 
+        internal void InstallUpdate()
+        {
+            if (string.IsNullOrEmpty(updatePath)) { return; }
+            string path = updatePath;
+            var proc = new Process();
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.FileName = path;
+            proc.StartInfo.Arguments = "/silent /handoff \"appguid={" + GUID + "}\"";
+            proc.Start();
+        }
+
         private void GetDownloadPercentsFromRegistry()
         {
-            var tmp = RegistryUtil.GetUpdateRegistryKeyValue(registryBasePath + @"ClientState\{" + GUID + @"}\CurrentState", "DownloadProgressPercent");
+            var tmp = RegistryUtil.GetRegistryKeyValue(quitFlagPath, quitFlagName);
             if (!string.IsNullOrEmpty(tmp))
             {
                 status.DownloadPercent = uint.Parse(tmp);

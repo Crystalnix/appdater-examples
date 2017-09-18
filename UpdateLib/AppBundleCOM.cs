@@ -1,37 +1,49 @@
 ﻿using System;
 using System.Threading.Tasks;
 using GoogleUpdate3Lib;
-using System.ComponentModel;
 using System.Threading;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
 
 namespace UpdateLib
 {
     public class AppBundleCOM : IDisposable
     {
         private static string logFilePath = @"C:\Users\Public\Documents\UpdateCOM.log";
-        private static string appGUID;
         private IAppBundleWeb appBundle;
         public Status status;
 
-        public AppBundleCOM()
+        public string registryBasePath { get; private set; }
+        public string GUID { get; private set; }
+
+        public AppBundleCOM(string appGUID, string regBasePath)
         {
             status = new Status();
+            GUID = appGUID;
+            registryBasePath = regBasePath;
         }
 
-        public bool Initialize(string appGUID = null)
+        ~AppBundleCOM()
         {
-            var cobj = new GoogleUpdate3WebMachineClass();
-            var obj = (IGoogleUpdate3Web)cobj;
-            appBundle = (IAppBundleWeb)obj.createAppBundleWeb();
+            DeInitialize();
+        }
+
+        public void Dispose()
+        {
+            DeInitialize();
+        }
+
+        public bool Initialize()
+        {
+            var COM_obj = new GoogleUpdate3WebMachineClass();
+            var class_obj = (IGoogleUpdate3Web)COM_obj;
+            appBundle = (IAppBundleWeb)class_obj.createAppBundleWeb();
             appBundle.initialize();
             try
             {
-                if (!string.IsNullOrEmpty(appGUID))
+                if (!string.IsNullOrEmpty(GUID))
                 {
-                    AppBundleCOM.appGUID = appGUID;
-                    appBundle.createInstalledApp("{" + appGUID + "}");     // Particulary application
+                    appBundle.createInstalledApp("{" + GUID + "}");     // Particulary application
+                    var appweb = (IAppWeb)appBundle[0];
                 }
                 else
                 {
@@ -45,12 +57,7 @@ namespace UpdateLib
             }
 
             return true;
-        }
-
-        ~AppBundleCOM()
-        {
-            DeInitialize();
-        }
+        }       
 
         public void DeInitialize()
         {
@@ -92,19 +99,12 @@ namespace UpdateLib
             return AppInCurrentStateCount(appBundle, currentState.STATE_READY_TO_INSTALL, true) == appBundle.length;
         }
 
-        public async Task<bool> InstallUpdates()
+        public async Task InstallUpdates()
         {
-            ToLog(new[] { "", "Wait while installing" });
+            DeInitialize();
 
-            appBundle.install();
-            await Task.Run(() => GetCurrentStateValues());
-
-            var waitingThread = new Thread(WaitingThread);
-            waitingThread.Start(appBundle);
-            waitingThread.Join();
-            ToLog(new string[] { "Done!" });
-
-            return AppInCurrentStateCount(appBundle, currentState.STATE_INSTALL_COMPLETE, true) == appBundle.length;
+            var cmd = new AppBundleCMD(GUID, registryBasePath);
+            await Task.Run(() => cmd.InstallUpdate());
         }
 
         static private void ToLog(string[] lines)
@@ -189,7 +189,24 @@ namespace UpdateLib
                     repeat = true;
                 }
             }
-            status.StatusString = StatusConst.READY.ToString();
+
+            status.StatusString = string.Empty;
+            if (AppInCurrentStateCount(appBundle, currentState.STATE_ERROR) != 0)
+            {
+                status.StatusString += " " + StatusConst.ERROR.ToString();
+            }
+            else if (AppInCurrentStateCount(appBundle, currentState.STATE_NO_UPDATE) != 0)
+            {
+                status.StatusString += " " + StatusConst.NO_UPDATE.ToString();
+            }
+            else if (AppInCurrentStateCount(appBundle, currentState.STATE_UPDATE_AVAILABLE) != 0)
+            {
+                status.StatusString += " " + StatusConst.HAVE_UPDATE.ToString();
+            }
+            else
+            {
+                status.StatusString = StatusConst.READY.ToString();
+            }
         }
         
         static void WaitingThread(object infoState)
@@ -202,7 +219,8 @@ namespace UpdateLib
                     if (AppInCurrentStateCount(appBundle, currentState.STATE_CHECKING_FOR_UPDATE) == 0 &&
                         AppInCurrentStateCount(appBundle, currentState.STATE_WAITING_TO_DOWNLOAD) == 0 &&
                         AppInCurrentStateCount(appBundle, currentState.STATE_DOWNLOADING) == 0 &&
-                        AppInCurrentStateCount(appBundle, currentState.STATE_INSTALLING) == 0
+                        AppInCurrentStateCount(appBundle, currentState.STATE_INSTALLING) == 0 &&
+                        AppInCurrentStateCount(appBundle, currentState.STATE_WAITING_TO_INSTALL) == 0
                         )
                     {
                         return;
@@ -210,11 +228,6 @@ namespace UpdateLib
                 }
                 Thread.Sleep(500);
             }
-        }
-
-        public void Dispose()
-        {
-            DeInitialize();
         }
     }
 }
