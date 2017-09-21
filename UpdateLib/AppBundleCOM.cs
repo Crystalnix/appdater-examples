@@ -223,6 +223,7 @@ namespace UpdateLib
                         AppInCurrentStateCount(appBundle, currentState.STATE_WAITING_TO_INSTALL) == 0
                         )
                     {
+                        AppInCurrentStateCount(appBundle, currentState.STATE_WAITING_TO_INSTALL);
                         return;
                     }
                 }

@@ -92,13 +92,19 @@ namespace TestAppWPF
                     {
                         await Task.Run(() => com.InstallUpdates());
                     }
+                    else
+                    {
+                        CheckBtnCOM.IsEnabled = true;
+                        CheckBtnCmd.IsEnabled = true;
+                    }
                 }
             }
-
+            else
+            {
+                CheckBtnCOM.IsEnabled = true;
+                CheckBtnCmd.IsEnabled = true;
+            }
             com.DeInitialize();
-
-            CheckBtnCOM.IsEnabled = true;
-            CheckBtnCmd.IsEnabled = true;
         }
 
         private static void CloseInstanceOnUpdate(object stateInfo)
