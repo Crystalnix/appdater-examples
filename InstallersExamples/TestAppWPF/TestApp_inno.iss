@@ -33,3 +33,16 @@ Source: "Sleep Away.mp3"; DestDir: "{app}"; Flags: ignoreversion
 [Registry]
 Root: HKLM; Subkey: Software\{#Company}\Update\Clients\{#APPID}; ValueType: string; ValueName: "pv"; ValueData: {#MyAppVersion}
 Root: HKLM; Subkey: Software\{#Company}\Update\Clients\{#APPID}; ValueType: string; ValueName: "name"; ValueData: {#MyAppName}
+
+[Code]
+function InitializeSetup(): Boolean;
+begin
+  RegWriteDWordValue(HKEY_LOCAL_MACHINE, 'Software\{#Company}\Update\Clients\'+ExpandConstant('{#APPID}'), 'update', 1);
+  Sleep(5000);
+  result:=True;
+end;
+
+procedure DeinitializeSetup();
+begin
+  RegWriteDWordValue(HKEY_LOCAL_MACHINE, 'Software\{#Company}\Update\Clients\'+ExpandConstant('{#APPID}'), 'update', 0);
+end;
