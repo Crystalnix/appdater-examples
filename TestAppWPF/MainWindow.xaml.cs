@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -17,12 +19,14 @@ namespace TestAppWPF
         private string appGUID;
         private string logSettingsFilePath = @"C:\Update.ini";
         private string baseRegKey;
+        private ApplicationState appState;
+        private AppBundleCOM comUpd;
+        private AppBundleCMD cmdUpd;
+        private Status updStatus;
 
         public MainWindow()
         {
             InitializeComponent();
-
-            ShowVersion();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             company = assembly.GetCustomAttribute<AssemblyCompanyAttribute>().Company;
@@ -30,104 +34,88 @@ namespace TestAppWPF
             baseRegKey = @"SOFTWARE\Wow6432Node\" + company + @"\Update\";
 
             // Always Enable Omaha Log
-            System.IO.File.Copy("./Update.ini", logSettingsFilePath, true);
+            File.Copy("./Update.ini", logSettingsFilePath, true);
 
-            ThreadPool.QueueUserWorkItem(CloseInstanceOnUpdate, baseRegKey + @"Clients\{" + appGUID +@"}");
+            appState = new ApplicationState();
+            CheckBtnCmd.DataContext = appState;
+            CheckBtnCOM.DataContext = appState;
+            RestartBtn.DataContext = appState;
+
+            updStatus = new Status();
+            LblStatus.DataContext = updStatus;
+            ProgressDownload.DataContext = updStatus;
+
+            comUpd = new AppBundleCOM(appGUID, baseRegKey, ref updStatus);
+            cmdUpd = new AppBundleCMD(appGUID, baseRegKey, ref updStatus);
+
+            ShowVersion();
         }
 
         private void ShowVersion()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             LblVersion.Content = assembly.GetName().Version.ToString();
+
+            var registredVersion = RegistryUtil.GetRegistryKeyValue(baseRegKey + @"Clients\{" + appGUID + @"}", "pv");
+            if (registredVersion.CompareTo(LblVersion.Content) != 0)
+            {
+                appState.NewVersionInstalled = true;
+            }
         }
 
         private async void ChkBtnCmd_Click(object sender, RoutedEventArgs e)
         {
-            CheckBtnCOM.IsEnabled = false;
-            CheckBtnCmd.IsEnabled = false;
-
-            // create object
-            var upd = new AppBundleCMD(appGUID, baseRegKey);
-
-            // binding
-            LblStatus.DataContext = upd.status;
-            ProgressDownload.DataContext = upd.status;
+            appState.IsReadyToCheck = false;
 
             // run check update process
-            if (MessageBox.Show("Close all instances of application for update?", "Warrning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                await Task.Run(() => upd.CheckUpdateProcessAsync());
-            }
+            await Task.Run(() => cmdUpd.CheckUpdateProcessAsync());
+
+            appState.IsReadyToCheck = true;
 
             ShowVersion();
-
-            CheckBtnCOM.IsEnabled = true;
-            CheckBtnCmd.IsEnabled = true;
         }
 
         private async void ChkBtnCOM_Click(object sender, RoutedEventArgs e)
         {
-            CheckBtnCOM.IsEnabled = false;
-            CheckBtnCmd.IsEnabled = false;
+            appState.IsReadyToCheck = false;
 
-            // create COM wrapper
-            var com = new AppBundleCOM(appGUID, baseRegKey);
-            if (!com.Initialize())
+            if (!comUpd.Initialize())
             {
-                CheckBtnCOM.IsEnabled = true;
-                CheckBtnCmd.IsEnabled = true;
+                appState.IsReadyToCheck = true;
                 return;
             }
-
-            // binding
-            LblStatus.DataContext = com.status;
-            ProgressDownload.DataContext = com.status;
 
             // call COM wrapper methods
-            if (await Task.Run(() => com.CheckForUpdates()))
+            if (await Task.Run(() => comUpd.CheckForUpdates()))
             {
-                if (await Task.Run(() => com.DownloadUpdates()))
+                if (await Task.Run(() => comUpd.DownloadUpdates()))
                 {
-                    if (MessageBox.Show("Close all instances of application for update?", "Warrning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        await Task.Run(() => com.InstallUpdates());
-                    }
-                    else
-                    {
-                        CheckBtnCOM.IsEnabled = true;
-                        CheckBtnCmd.IsEnabled = true;
-                    }
+                    await Task.Run(() => comUpd.InstallUpdates());
                 }
             }
-            else
-            {
-                CheckBtnCOM.IsEnabled = true;
-                CheckBtnCmd.IsEnabled = true;
-            }
-            com.DeInitialize();
+
+            comUpd.DeInitialize();
+            appState.IsReadyToCheck = true;
+
+            ShowVersion();
         }
 
-        private static void CloseInstanceOnUpdate(object stateInfo)
+        private void RestartBtn_Click(object sender, RoutedEventArgs e)
         {
-            var regKey = (string)stateInfo;
-            if (string.IsNullOrEmpty(regKey))
+            var exe_path = Assembly.GetExecutingAssembly().Location;
+            var tokens = exe_path.Split('\\');
+            var linkfile = "..\\" + tokens[tokens.Length - 1].Replace(".exe",".lnk");
+
+            if (File.Exists(linkfile))
             {
-                return;
+                var info = new ProcessStartInfo("cmd");
+                info.WindowStyle = ProcessWindowStyle.Hidden;
+                info.WorkingDirectory = Path.GetDirectoryName(exe_path);
+                info.Arguments = "/C " + linkfile;
+                Process.Start(info);
             }
-            Process p = Process.GetCurrentProcess();
-            int ival;
-            while (true)
-            {
-                var val = RegistryUtil.GetRegistryKeyValue(regKey, "update");
-                if (int.TryParse(val, out ival))
-                {
-                    if (ival == 1)
-                    {
-                        p.CloseMainWindow();
-                    }
-                }
-                Thread.Sleep(10);
-            }
+
+            Application.Current.Shutdown();
         }
     }
 }

@@ -5,16 +5,17 @@ namespace UpdateLib
 {
     public class AppBundleCMD
     {
-        public Status status;
+        
         public string registryBasePath { get; private set; }
         public string GUID { get; private set; }
         private string quitFlagPath;
         private string quitFlagName;
         private string updatePath;
+        private Status status;
 
-        public AppBundleCMD(string appGUID, string regBasePath)
+        public AppBundleCMD(string appGUID, string regBasePath, ref Status status)
         {
-            status = new Status();
+            this.status = status;
 
             GUID = appGUID;
             registryBasePath = regBasePath;

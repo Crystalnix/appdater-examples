@@ -15,9 +15,9 @@ namespace UpdateLib
         public string registryBasePath { get; private set; }
         public string GUID { get; private set; }
 
-        public AppBundleCOM(string appGUID, string regBasePath)
+        public AppBundleCOM(string appGUID, string regBasePath, ref Status status)
         {
-            status = new Status();
+            this.status = status;
             GUID = appGUID;
             registryBasePath = regBasePath;
         }
@@ -101,9 +101,11 @@ namespace UpdateLib
 
         public async Task InstallUpdates()
         {
+            status.StatusString = StatusConst.INSTALLING.ToString();
+
             DeInitialize();
 
-            var cmd = new AppBundleCMD(GUID, registryBasePath);
+            var cmd = new AppBundleCMD(GUID, registryBasePath, ref status);
             await Task.Run(() => cmd.InstallUpdate());
         }
 
@@ -166,6 +168,10 @@ namespace UpdateLib
         private void GetValues()
         {
             bool repeat = true;
+
+            status.StatusString = StatusConst.INIT.ToString();
+            status.DownloadPercent = 0;
+            Thread.Sleep(200);
 
             while (repeat && appBundle != null)
             {

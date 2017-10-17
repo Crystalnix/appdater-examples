@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GoogleUpdate3Lib">
-      <HintPath>..\..\..\..\..\..\..\OmahaEnvironment\omaha\omaha\scons-out\opt-win\staging\idls\GoogleUpdate3Lib.dll</HintPath>
+      <HintPath>..\TestAppWPF\omaha_idls\GoogleUpdate3Lib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="PresentationCore" />

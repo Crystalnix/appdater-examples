@@ -4,6 +4,7 @@ namespace UpdateLib
 {
     enum StatusConst
     {
+        INIT,
         READY,
         CHECKING,
         DOWNLOADING,
